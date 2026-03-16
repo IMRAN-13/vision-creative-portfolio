@@ -1,353 +1,197 @@
-<!DOCTYPE html>
-<html lang="en">
+<script>
 
-<head>
+// Scroll animations
+const observerOptions = { threshold: 0.15 };
 
-<meta charset="UTF-8">
+const observer = new IntersectionObserver((entries)=>{
+entries.forEach(entry=>{
+if(entry.isIntersecting){
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Vision Creative Portfolio</title>
-
-<meta name="description" content="Video Editing Portfolio of Imran and Chaitanya">
-
-<link rel="icon" href="https://cdn-icons-png.flaticon.com/512/3135/3135715.png">
-
-<script src="https://cdn.tailwindcss.com"></script>
-
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-<style>
-
-body{
-background:#0a0a0a;
-color:white;
-font-family:Poppins;
-margin:0;
-}
-
-.font-bebas{
-font-family:Bebas Neue;
-}
-
-.card{
-
-background:rgba(255,255,255,0.04);
-
-border:1px solid rgba(255,255,255,0.1);
-
-border-radius:15px;
-
-padding:25px;
-
-transition:.4s;
+entry.target.classList.add("visible");
 
 }
+});
+},observerOptions);
 
-.card:hover{
+document.querySelectorAll(
+'.fade-up,.fade-left,.fade-right,.scale-in,.stagger-children'
+).forEach(el=>{
 
-transform:translateY(-8px);
+observer.observe(el);
 
-box-shadow:0 0 30px rgba(255,0,0,.3);
+});
 
-}
 
-.video{
+// Carousel
 
-border-radius:12px;
+const carouselPositions = {
 
-overflow:hidden;
+imran:0,
+chaitanya:0,
+featured:0
 
-}
+};
 
-.btn{
+function scrollCarousel(id,dir){
 
-background:#e11d48;
+const track=document.getElementById("carousel-"+id);
 
-padding:12px 30px;
+if(!track)return;
 
-border-radius:8px;
+const step=300;
 
-text-decoration:none;
+const maxScroll=
+track.scrollWidth-
+track.parentElement.offsetWidth;
 
-display:inline-block;
+carouselPositions[id]=Math.max(
 
-margin:10px;
+0,
+
+Math.min(
+
+maxScroll,
+
+carouselPositions[id]+(dir*step)
+
+)
+
+);
+
+track.style.transform=
+`translateX(-${carouselPositions[id]}px)`;
 
 }
 
-.btn:hover{
 
-background:#be123c;
+// Drag support
+
+['imran','chaitanya','featured']
+.forEach(id=>{
+
+const track=
+document.getElementById(
+'carousel-'+id
+);
+
+if(!track)return;
+
+let isDragging=false;
+
+let startX=0;
+
+let startScroll=0;
+
+track.addEventListener(
+
+'mousedown',
+
+e=>{
+
+isDragging=true;
+
+startX=e.pageX;
+
+startScroll=carouselPositions[id];
 
 }
 
-</style>
+);
 
-</head>
+track.addEventListener(
 
-<body>
+'mousemove',
 
+e=>{
 
-<section class="h-screen flex flex-col justify-center items-center text-center">
+if(!isDragging)return;
 
-<h1 class="font-bebas text-8xl">
-WELCOME
-</h1>
+const diff=startX-e.pageX;
 
-<p class="text-gray-400 mt-4 max-w-xl">
+const maxScroll=
+track.scrollWidth-
+track.parentElement.offsetWidth;
 
-This portfolio showcases the creative work of Imran & Chaitanya across freelance projects, university productions and professional content creation.
+carouselPositions[id]=Math.max(
 
-</p>
+0,
 
-<a href="https://wa.me/917396354529" class="btn">
+Math.min(
 
-Hire Us
+maxScroll,
 
-</a>
+startScroll+diff
 
-</section>
+)
 
+);
 
-<section class="p-10 max-w-6xl mx-auto grid md:grid-cols-2 gap-10">
+track.style.transform=
+`translateX(-${carouselPositions[id]}px)`;
 
+}
 
-<div class="card">
+);
 
-<h2 class="font-bebas text-4xl text-red-500">
+track.addEventListener(
+'mouseup',
+()=>isDragging=false
+);
 
-IMRAN
+track.addEventListener(
+'mouseleave',
+()=>isDragging=false
+);
 
-</h2>
+});
 
-<p class="text-sm text-gray-400">
 
-Social Media Manager | Video Editor | Motion Graphics Designer
+// Particles
 
-</p>
+const container=
+document.getElementById(
+"particles-container"
+);
 
-<h3 class="mt-5 text-red-400">
+if(container){
 
-Software
+for(let i=0;i<20;i++){
 
-</h3>
+const p=document.createElement("div");
 
-<p class="text-gray-400">
+p.className="particle";
 
-Premiere Pro • After Effects • Photoshop • Canva • CapCut
+const size=Math.random()*4+1;
 
-</p>
+p.style.cssText=`
 
-<h3 class="mt-5 text-red-400">
+width:${size}px;
+height:${size}px;
 
-Contact
+left:${Math.random()*100}%;
 
-</h3>
+top:${50+Math.random()*50}%;
 
-<p>
+background:${
+Math.random()>0.5
+? '#e11d48'
+:'#06b6d4'
+};
 
-<a href="https://instagram.com/visionbyimran">
+animation-delay:
+${Math.random()*8}s;
 
-Instagram
+`;
 
-</a>
+container.appendChild(p);
 
-</p>
+}
 
-<p>
+}
 
-<a href="https://linkedin.com/in/imran-shaik-5b9510362">
 
-LinkedIn
+// Icons
 
-</a>
+lucide.createIcons();
 
-</p>
-
-<p>
-
-WhatsApp:
-7396354529
-
-</p>
-
-</div>
-
-
-
-<div class="card">
-
-<h2 class="font-bebas text-4xl text-cyan-400">
-
-CHAITANYA
-
-</h2>
-
-<p class="text-sm text-gray-400">
-
-Videographer | Video Editor
-
-</p>
-
-<h3 class="mt-5 text-cyan-400">
-
-Software
-
-</h3>
-
-<p class="text-gray-400">
-
-CapCut • VN • Canva
-
-</p>
-
-<h3 class="mt-5 text-cyan-400">
-
-Contact
-
-</h3>
-
-<p>
-
-<a href="https://instagram.com/_hey_chaitu">
-
-Instagram
-
-</a>
-
-</p>
-
-<p>
-
-<a href="https://linkedin.com/in/chiatanya-enjirapu-947b2337b">
-
-LinkedIn
-
-</a>
-
-</p>
-
-<p>
-
-WhatsApp:
-9493684663
-
-</p>
-
-</div>
-
-
-</section>
-
-
-<section class="p-10 max-w-6xl mx-auto">
-
-<h2 class="font-bebas text-6xl text-center text-red-500">
-
-OUR WORK
-
-</h2>
-
-
-<div class="grid md:grid-cols-3 gap-6 mt-10">
-
-
-<div class="video">
-
-<video width="100%" controls>
-
-<source src="videos/imran1.mp4" type="video/mp4">
-
-</video>
-
-</div>
-
-
-<div class="video">
-
-<video width="100%" controls>
-
-<source src="videos/imran2.mp4" type="video/mp4">
-
-</video>
-
-</div>
-
-
-<div class="video">
-
-<video width="100%" controls>
-
-<source src="videos/chaitanya1.mp4" type="video/mp4">
-
-</video>
-
-</div>
-
-
-</div>
-
-</section>
-
-
-<section class="text-center p-16">
-
-<h2 class="font-bebas text-6xl text-red-500">
-
-WHY CHOOSE US
-
-</h2>
-
-<p class="text-gray-400 mt-5">
-
-Creative storytelling • Fast delivery • Professional quality • Social media expertise
-
-</p>
-
-</section>
-
-
-<section class="text-center p-16">
-
-<h2 class="font-bebas text-6xl text-red-500">
-
-CONTACT
-
-</h2>
-
-<p class="mt-5">
-
-Imran : 7396354529
-
-</p>
-
-<p>
-
-Chaitanya : 9493684663
-
-</p>
-
-</section>
-
-
-<footer class="text-center p-10 border-t border-gray-800">
-
-<h3 class="font-bebas text-3xl text-red-500">
-
-VISION CREATIVE STUDIOS
-
-</h3>
-
-<p class="text-gray-500">
-
-Imran & Chaitanya © 2026
-
-</p>
-
-</footer>
-
-
-</body>
-
-</html>
+</script>
